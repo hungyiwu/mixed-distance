@@ -6,10 +6,10 @@ class conv_ae(tfk.Model):
     def __init__(self, input_shape: tuple, latent_dim: int, **kwargs):
         super(conv_ae, self).__init__(**kwargs)
         conv_1_params = dict(
-            filters=32, kernel_size=3, activation="relu", strides=2, padding="same"
+            filters=32, kernel_size=3, activation="relu", padding="same"
         )
         conv_2_params = dict(
-            filters=64, kernel_size=3, activation="relu", strides=2, padding="same"
+            filters=64, kernel_size=3, activation="relu", padding="same"
         )
 
         # encoder
@@ -30,7 +30,7 @@ class conv_ae(tfk.Model):
         x = tfk.layers.Conv2DTranspose(**conv_2_params)(x)
         x = tfk.layers.Conv2DTranspose(**conv_1_params)(x)
         decoder_output = tfk.layers.Conv2DTranspose(
-            filters=1, kernel_size=3, activation="sigmoid", padding="same"
+            filters=input_shape[2], kernel_size=3, activation="sigmoid", padding="same"
         )(x)
         self.decoder = tfk.Model(decoder_input, decoder_output, name="decoder")
 
@@ -50,3 +50,6 @@ class conv_ae(tfk.Model):
         y_pred = self.decoder(self.encoder(x))
         reconstruction_loss = tf.reduce_mean(tfk.losses.binary_crossentropy(y, y_pred))
         return {"loss": reconstruction_loss}
+
+    def call(self, x):
+        return self.decoder(self.encoder(x))
