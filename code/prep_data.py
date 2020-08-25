@@ -38,15 +38,15 @@ data_fp = Path(data_fp)
 img_stack = []
 metadata = []
 
-for label in [0, 1]:
-    label_fp = data_fp / "raw_data" / str(label)
-    for img_fp in label_fp.iterdir():
-        d, a = parse_load(img_fp)
-        img_stack.append(a)
-        metadata.append(d)
+for img_fp in (data_fp / "raw_data").glob("**/*.png"):
+    d, a = parse_load(img_fp)
+    img_stack.append(a)
+    metadata.append(d)
 
 img_stack = np.stack(img_stack, axis=0)
 metadata = pd.DataFrame.from_records(metadata)
 
 np.save(data_fp / "derived_data" / "img_stack.npy", img_stack)
 metadata.to_csv(data_fp / "derived_data" / "metadata.csv", index=False)
+
+print(f"{img_stack.shape[0]} images parsed.")
