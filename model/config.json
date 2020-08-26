@@ -1,0 +1,1 @@
+{"num_conv_layer": 3, "num_conv_filter": 64, "input_shape": [64, 64, 3], "latent_dim": 50}
