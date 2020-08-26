@@ -3,9 +3,22 @@ import tensorflow.keras as tfk
 
 
 class conv_ae(tfk.Model):
-    def __init__(self, input_shape: tuple, latent_dim: int, num_conv_layer: int, num_conv_filter: int, **kwargs):
+    def __init__(
+        self,
+        input_shape: tuple,
+        latent_dim: int,
+        num_conv_layer: int,
+        num_conv_filter: int,
+        **kwargs
+    ):
         super(conv_ae, self).__init__(**kwargs)
-        conv_params = dict(filters=num_conv_filter, kernel_size=3, activation="relu", padding="same", strides=(1, 1))
+        conv_params = dict(
+            filters=num_conv_filter,
+            kernel_size=3,
+            activation="relu",
+            padding="same",
+            strides=(1, 1),
+        )
 
         # encoder
         encoder_input = tfk.Input(shape=input_shape)
@@ -16,7 +29,7 @@ class conv_ae(tfk.Model):
             x = tfk.layers.Conv2D(**conv_params)(x)
             x = tfk.layers.Conv2D(**conv_params)(x)
             x = tfk.layers.MaxPool2D(pool_size=(2, 2))(x)
-            
+
         intermediate_shape = x.shape[1:]
         x = tfk.layers.Flatten()(x)
         encoder_output = tfk.layers.Dense(units=latent_dim)(x)
@@ -36,7 +49,11 @@ class conv_ae(tfk.Model):
             x = tfk.layers.UpSampling2D(size=(2, 2))(x)
 
         decoder_output = tfk.layers.Conv2DTranspose(
-            filters=input_shape[2], kernel_size=3, activation="sigmoid", padding="same", strides=(1, 1)
+            filters=input_shape[2],
+            kernel_size=3,
+            activation="sigmoid",
+            padding="same",
+            strides=(1, 1),
         )(x)
         self.decoder = tfk.Model(decoder_input, decoder_output, name="decoder")
 

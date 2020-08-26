@@ -12,7 +12,7 @@ from autoencoder import conv_ae
 
 # paths
 checkpoint_fp = "../data/checkpoint"
-data_fp = "../data/derived_data/img_stack.npy"
+data_fp = "../data/derived_data"
 
 # params
 num_img = 3
@@ -23,16 +23,18 @@ with open(checkpoint_fp / "config.json", "r") as f:
     config = json.load(f)
 model = conv_ae(**config)
 
-#model.encoder.summary()
-#model.decoder.summary()
+# model.encoder.summary()
+# model.decoder.summary()
 
 model.load_weights(checkpoint_fp / "model")
 
 # load data & resize & reconstruct
-arr = np.load(data_fp)
+data_fp = Path(data_fp)
+arr = np.load(data_fp / "img_stack.npy")
 arr = img_as_float32(arr)
 arr = resize(arr, (arr.shape[0], 64, 64, arr.shape[3]))
-arr_pred = model.call(arr)
+arr_latent = model.encoder(arr)
+arr_pred = model.decoder(arr_latent)
 
 # show reconstruction result
 sample = np.random.choice(range(arr.shape[0]), size=num_img, replace=False)
@@ -53,3 +55,7 @@ axes[0, 0].set_title("input")
 axes[0, 1].set_title("output")
 fig.tight_layout()
 plt.savefig("reconstructed.png")
+
+# save to disk
+np.save(data_fp / "img_stack_latent.npy", arr_latent)
+np.save(data_fp / "img_stack_pred.npy", arr_pred)
