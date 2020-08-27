@@ -12,7 +12,7 @@ Figure 2. Reconstructed labels of whole-slide image of patient `10253`. Color co
 
 <br />
 
-To demonstrate this method, the patches were first converted to 50-dimension latent vectoros by a convolution autoencoder (`code/autoencoder.py`). This process treats each image patch independently and hence the latent vectors contain only image content information. The 50-dimension latent vectors were then reduced to 2-dimension for visualization using UMAP, with and without using the patch coordinate within the whole-slide image (Figure 3). Notably, the `umap-learn` implementation [4] includes tunable regularization strength, allowing incorporation of different confidence of the spatial continuity across applications.
+To demonstrate this method, the patches were first converted to 50-dimension latent vectoros by a convolution autoencoder (`code/autoencoder.py`). This process treats each image patch independently and hence the latent vectors contain only image content information. The 50-dimension latent vectors were then reduced to 2-dimension using UMAP, with and without using the patch coordinate within the whole-slide image for L2 regularization (Figure 3). Notably, the `umap-learn` implementation [4] includes tunable regularization strength, allowing incorporation of different confidence of the spatial continuity across applications.
 
 <br />
 
@@ -21,7 +21,7 @@ Figure 3. UMAP visualization of the 50-dimension latent vectors of image patches
 
 <br />
 
-To demonstrate the value gain in image clustering & classification, a support vector machine (SVM) classifier was trained and the 5-fold cross-validation metrics (accuracy, precision, recall) were recorded (Figure 4). Note that only 70 out of 549 image patches (12.75%) in this whole-slide image are labeled as positive, a typical class imbalance issue in histopathology image labels, reflected on the low recall but high accuracy at 0% spatial information (Figure 4). Depending on the application/situation, false positive may be less of a concern compared to false negative, and hence one may choose to go for higher recall with a trade-off of lower precision (as in 60% spatial information) compared to lower recall and higher precision (as in 0% spatial information).
+To demonstrate the value gain in image clustering & classification, a support vector machine (SVM) classifier was trained and the 5-fold cross-validation metrics (accuracy, precision, recall) were recorded (Figure 4). Note that only 70 out of 549 image patches (12.75%) in this whole-slide image were labeled as positive, a typical class imbalance issue in histopathology image labels, reflected on the low recall but high accuracy at 0% spatial information (Figure 4). Depending on the application/situation, false positive may be less of a concern compared to false negative, and hence one may choose to go for higher recall and follow up with cost-effective validation to identify false positives (as in 60% spatial information) compared to lower recall where screening for false negative takes more time/effort/resource (as in 0% spatial information).
 
 <br />
 
@@ -30,7 +30,7 @@ Figure 4. 5-fold cross-validation metrics (accuracy, precision, recall) of a sup
 
 <br />
 
-In conclusion, this repo demonstrates a simple method to incorporate knowledge/prior belief of spatial continuity in image clustering/classification. In many cases, more complex spatial information may be incorporated in similar ways, ex. a patch between patches of tumor grade 1 and 3 are more likely to be grade 1-3 than no tumor or grade 4-5.
+In conclusion, this repo demonstrates a simple method to incorporate spatial continuity knowledge/prior belief in image clustering/classification. In many cases, more complex spatial information may be incorporated in similar ways, ex. a patch between patches of tumor grade 1 and 3 are more likely to be grade 1-3 than no tumor or grade 4-5.
 
 ## Reference
 [1] Barcode Annotations for Medical Image Retrieval: A Preliminary Investigation ([arxiv](https://arxiv.org/abs/1505.05212))  
